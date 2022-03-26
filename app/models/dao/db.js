@@ -1,40 +1,97 @@
-/*
- * @Description: 数据库连接
- * @Author: hai-27
- * @Date: 2020-02-07 16:51:56
- * @LastEditors: hai-27
- * @LastEditTime: 2020-02-27 13:20:11
- */
-var mysql = require('mysql');
+//https://sequelize.org/v6/index.html  文档
+
+const { Sequelize, DataTypes, QueryTypes   } = require('sequelize');
 const { dbConfig } = require('../../../config');
-var pool = mysql.createPool(dbConfig);
 
-var db = {};
+const sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
+  host: dbConfig.host,
+  dialect: 'mysql'/* one of 'mysql' | 'mariadb' | 'postgres' | 'mssql' */
+});
 
-db.query = function (sql, params) {
 
-  return new Promise((resolve, reject) => {
-    // 取出链接
-    pool.getConnection(function (err, connection) {
-
-      if (err) {
-        reject(err);
-        return;
-      }
-
-      connection.query(sql, params, function (error, results, fields) {
-        console.log(`${ sql }=>${ params }`);
-        // 释放连接
-        connection.release();
-        if (error) {
-          reject(error);
-          return;
-        }
-        resolve(results);
-      });
-
-    });
-  });
+const customerLogin = sequelize.define('customer_login', {
+  customer_id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+  login_name: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  password: {
+    type: DataTypes.CHAR,
+    allowNull: false
+  },
+},
+{ 
+  freezeTableName: true,
+  timestamps: false,
 }
-// 导出对象
-module.exports = db;
+);
+
+const customer_inf = sequelize.define('customer_inf', {
+  customer_inf_id: {
+    type: DataTypes.INTEGER(10),
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+  customer_id: {
+    type: DataTypes.INTEGER(10),
+    allowNull: false
+  },
+  customer_name: {
+    type: DataTypes.STRING(20),
+  },
+  identity_card_type: {
+    type: DataTypes.TINYINT(4),
+  },
+  identity_card_no: {
+    type: DataTypes.STRING(20),
+  },
+  mobile_phone: {
+    type: DataTypes.INTEGER(10),
+  },
+  mobile_email: {
+    type: DataTypes.STRING(50),
+  },
+  gender: {
+    type: DataTypes.CHAR(1),
+  },
+  register_time: {
+    type: DataTypes.DATE,
+    allowNull: false
+  },
+},
+
+{ 
+  freezeTableName: true,
+  timestamps: false,
+}
+);
+
+(async () => {
+  await sequelize.sync();
+  // 这里是代码
+ 
+})()
+
+const query = function (sql, replacements, type = 'SELECT'){
+  return new Promise((resolve, reject) => {
+    sequelize.query(sql, { 
+      replacements,
+      type: QueryTypes[type] 
+    }).then(res => {
+      resolve(res)
+    })
+  })
+}
+
+module.exports = {
+  sequelize,
+  query,
+  customerLogin,
+  customer_inf
+}

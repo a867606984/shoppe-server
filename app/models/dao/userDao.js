@@ -5,22 +5,42 @@
  * @LastEditors: hai-27
  * @LastEditTime: 2020-02-27 02:12:30
  */
-const db = require('./db.js');
+const db = require('./db');
 
 module.exports = {
+
   // 连接数据库根据用户名和密码查询用户信息
   Login: async (userName, password) => {
-    const sql = 'select * from users where userName = ? and password = ?';
+    const sql = '';
     return await db.query(sql, [userName, password]);
   },
   // 连接数据库根据用户名查询用户信息
-  FindUserName: async (userName) => {
-    const sql = 'select * from users where userName = ?';
-    return await db.query(sql, [userName]);
+  FindUserName: async (login_name) => {
+    return await db.customerLogin.findAll({
+      where: {
+        login_name
+      }
+    });
   },
   // 连接数据库插入用户信息
-  Register: async (userName, password) => {
-    const sql = 'insert into users values(null,?,?,null)';
-    return await db.query(sql, [userName, password]);
+  Register: async (login_name, password) => {
+    let t = await db.sequelize.transaction()
+    try {
+      let { customer_id } = await db.customerLogin.create({
+        login_name,
+        password
+      }, { transaction: t})
+
+      await db.customer_inf.create({
+        customer_id,
+        register_time: new Date()
+      }, { transaction: t})
+      
+      await t.commit();
+
+      return true
+    } catch (error) {
+      t.rollback();
+    }
   }
 }

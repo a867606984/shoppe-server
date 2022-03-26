@@ -10,13 +10,22 @@ const path = require('path');
 module.exports = {
   Port: 3000, // 启动端口
   staticDir: path.resolve('./public'), // 静态资源路径
+  swaggerDir: path.resolve('./public/swagger'), //swagger路径
   uploadDir: path.join(__dirname, path.resolve('public/')), // 上传文件路径
   // 数据库连接设置
   dbConfig: {
     connectionLimit: 10,
-    host: 'localhost',
+    host: '127.0.0.1',
     user: 'root',
-    password: '',
-    database: 'storeDB'
-  }
+    password: '123456',
+    database: 'mshoppedb'
+  },
+  //redis连接设置
+  redisConfig: {
+    host: "42.194.195.99",
+    port: 9527,
+    password: 'chenping960728'
+  },
+  COOKIEKEY: 'sess:store:',
+  SESSIONKEY: 'sess:store:'
 }

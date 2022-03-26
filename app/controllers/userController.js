@@ -8,6 +8,8 @@
 const rp = require('request-promise');
 const userDao = require('../models/dao/userDao');
 const { checkUserInfo, checkUserName } = require('../middleware/checkUserInfo');
+let {  COOKIEKEY, SESSIONKEY } = require('../../config');
+const doCrypto = require('../utils/crypto')
 
 module.exports = {
 
@@ -17,51 +19,35 @@ module.exports = {
    */
   Login: async ctx => {
 
-    let { userName, password } = ctx.request.body;
+    let { login_name, password } = ctx.request.body;
 
     // 校验用户信息是否符合规则
-    if (!checkUserInfo(ctx, userName, password)) {
+    if (!checkUserInfo(ctx, login_name, password)) {
       return;
     }
-
-    // 连接数据库根据用户名和密码查询用户信息
-    let user = await userDao.Login(userName, password);
-    // 结果集长度为0则代表没有该用户
-    if (user.length === 0) {
-      ctx.body = {
-        code: '004',
-        msg: '用户名或密码错误'
-      }
-      return;
+    
+    let result = await userDao.FindUserName(login_name);
+    
+    //用户不存在
+    if(result.length == 0 ){
+      ctx.fail('该用户不存在')
+      return
     }
 
-    // 数据库设置用户名唯一
-    // 结果集长度为1则代表存在该用户
-    if (user.length === 1) {
+    //用户存在
 
-      const loginUser = {
-        user_id: user[0].user_id,
-        userName: user[0].userName
-      };
-      // 保存用户信息到session
-      ctx.session.user = loginUser;
-
-      ctx.body = {
-        code: '001',
-        user: loginUser,
-        msg: '登录成功'
-      }
-      return;
+    if(doCrypto(password) != result[0].password){
+      ctx.fail('密码不正确')
+      return
     }
 
-    //数据库设置用户名唯一
-    //若存在user.length != 1 || user.length!=0
-    //返回未知错误
-    //正常不会出现
-    ctx.body = {
-      code: '500',
-      msg: '未知错误'
-    }
+    ctx.session.uid = result[0].customer_id;
+    
+    ctx.success({
+      id: result[0].customer_id,
+      name: result[0].login_name
+    }, '登录成功')
+   
   },
   /**
    * 微信小程序用户登录
@@ -139,79 +125,53 @@ module.exports = {
    * @param {Object} ctx
    */
   FindUserName: async ctx => {
-    let { userName } = ctx.request.body;
 
-    // 校验用户名是否符合规则
-    if (!checkUserName(ctx, userName)) {
-      return;
-    }
-    // 连接数据库根据用户名查询用户信息
-    let user = await userDao.FindUserName(userName);
-    // 结果集长度为0则代表不存在该用户,可以注册
-    if (user.length === 0) {
-      ctx.body = {
-        code: '001',
-        msg: '用户名不存在，可以注册'
-      }
-      return;
-    }
+    let { login_name } = ctx.request.body;
 
-    //数据库设置用户名唯一
-    //结果集长度为1则代表存在该用户,不可以注册
-    if (user.length === 1) {
-      ctx.body = {
-        code: '004',
-        msg: '用户名已经存在，不能注册'
-      }
-      return;
-    }
+    let result = await userDao.FindUserName(login_name); 
 
-    //数据库设置用户名唯一，
-    //若存在user.length != 1 || user.length!=0
-    //返回未知错误
-    //正常不会出现
+    ctx.success(result)
+    return result;
+  },
+  SessionTest: async ctx => {
+    if(ctx.session.viewCount == null){
+      ctx.session.viewCount = 0;
+    }
+    ctx.session.viewCount++;
     ctx.body = {
-      code: '500',
-      msg: '未知错误'
+      code: '001',
+      msg: ctx.session.viewCount
     }
+
+  },
+  Test: async ctx => {
+    ctx.success()
   },
   Register: async ctx => {
-    let { userName, password } = ctx.request.body;
-
+    let { login_name, password } = ctx.request.body;
+   
     // 校验用户信息是否符合规则
-    if (!checkUserInfo(ctx, userName, password)) {
+    if (!checkUserInfo(ctx, login_name, password)) {
       return;
     }
-    // 连接数据库根据用户名查询用户信息
-    // 先判断该用户是否存在
-    let user = await userDao.FindUserName(userName);
+    let result = await userDao.FindUserName(login_name)
 
-    if (user.length !== 0) {
-      ctx.body = {
-        code: '004',
-        msg: '用户名已经存在，不能注册'
-      }
-      return;
+    //用户存在
+    if(result.length == 1){
+      ctx.fail('用户已注册')
+      return 
     }
 
-    try {
-      // 连接数据库插入用户信息
-      let registerResult = await userDao.Register(userName, password);
-      // 操作所影响的记录行数为1,则代表注册成功
-      if (registerResult.affectedRows === 1) {
-        ctx.body = {
-          code: '001',
-          msg: '注册成功'
-        }
-        return;
-      }
-      // 否则失败
-      ctx.body = {
-        code: '500',
-        msg: '未知错误，注册失败'
-      }
-    } catch (error) {
-      reject(error);
+    //用户不存在
+    let isSucc = await userDao.Register(login_name, doCrypto(password));
+
+    if(isSucc){
+    
+      ctx.success(null, '注册成功')
+    }else{
+      ctx.fail('注册失败')
     }
+
+   
   }
 };

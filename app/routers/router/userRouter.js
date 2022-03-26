@@ -15,5 +15,17 @@ userRouter
   .post('/users/miniProgramLogin', userController.miniProgramLogin)
   .post('/users/findUserName', userController.FindUserName)
   .post('/users/register', userController.Register)
+  .get('/users/sessionTest', userController.SessionTest)
+  /**
+  * @swagger
+  * /api/users/test:
+  *   get:
+  *     summary: 获取博客列表
+  *     description: 获取博客列表
+  *     responses:
+  *       200:
+  *         description: 成功获取
+  */
+  .get('/users/test', userController.Test)
 
 module.exports = userRouter;
