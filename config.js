@@ -26,6 +26,10 @@ module.exports = {
     port: 9527,
     password: 'chenping960728'
   },
-  COOKIEKEY: 'sess:store:',
-  SESSIONKEY: 'sess:store:'
+  COOKIEKEY: 'sess:store:', //cookie的key
+  SESSIONKEY: 'sess:store:',
+  product_pix: '010', //商品编号前缀
+  order_pix: '011', //订单编号前缀
+  warehouse_pix: '012' //仓库编号前缀
+
 }

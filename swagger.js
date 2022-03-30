@@ -13,18 +13,9 @@ const swaggerDefinition = {
     basePath: '/', // Base path (optional)
     schemes: ['http', 'https'],
     securityDefinitions: {
-        server_auth: {
-          type: 'oauth2',
-          description: '登录账号密码鉴权',
-          tokenUrl: `http://localhost:${Port}/image/oauth`,
-          flow: 'password',
-          scopes: {
-            token: 'modify pets in your account'
-          }
-        },
         token: {
           type: 'apiKey',
-          name: 'token',
+          name: 'cookie',
           in: 'header'
         }
       }

@@ -8,6 +8,11 @@
 const db = require('./db.js');
 
 module.exports = {
+  // 添加商品
+  AddProduct: async (obj) => {
+    const sql = "select * from category";
+    return await db.query(sql, []);
+  },
   // 连接数据库获取商品分类
   GetCategory: async () => {
     const sql = "select * from category";

@@ -10,6 +10,7 @@ const filterUrl = function (url) {
             'users/login',
             'users/register',
             'users/findUserName',
+            'users/findUserInfoById',
             'swagger',
             '.png',
             '.css',

@@ -23,6 +23,7 @@ module.exports = {
 
     // 校验用户信息是否符合规则
     if (!checkUserInfo(ctx, login_name, password)) {
+      ctx.fail('请填写正确的账号或密码')
       return;
     }
     
@@ -45,7 +46,8 @@ module.exports = {
     
     ctx.success({
       id: result[0].customer_id,
-      name: result[0].login_name
+      name: result[0].login_name,
+      token: ctx.cookies.get(COOKIEKEY)
     }, '登录成功')
    
   },
@@ -126,12 +128,26 @@ module.exports = {
    */
   FindUserName: async ctx => {
 
-    let { login_name } = ctx.request.body;
+    let { login_name } = ctx.request.query;
 
     let result = await userDao.FindUserName(login_name); 
 
-    ctx.success(result)
+    ctx.success({
+      login_name: result.length == 1 ? result[0].name : ''
+    })
     return result;
+  },
+  /**
+   * 查询用户信息
+   * @param {Object} ctx
+   */
+  FindUserInfoById: async ctx => {
+    let { customer_id } = ctx.request.query;
+    
+    let result = await userDao.FindUserInfoById(customer_id);
+
+     
+    ctx.success(result)
   },
   SessionTest: async ctx => {
     if(ctx.session.viewCount == null){

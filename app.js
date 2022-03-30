@@ -67,8 +67,8 @@ app.use(session({
 
 
 // 判断是否登录
-const isLogin = require('./app/middleware/isLogin');
-app.use(isLogin);
+// const isLogin = require('./app/middleware/isLogin');
+// app.use(isLogin);
 
 app.use(checkIsLogin);
 

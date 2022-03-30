@@ -54,7 +54,7 @@ const customer_inf = sequelize.define('customer_inf', {
   mobile_phone: {
     type: DataTypes.INTEGER(10),
   },
-  mobile_email: {
+  customer_email: {
     type: DataTypes.STRING(50),
   },
   gender: {
@@ -71,6 +71,133 @@ const customer_inf = sequelize.define('customer_inf', {
   timestamps: false,
 }
 );
+
+const product_info = sequelize.define('product_info', {
+  product_id: {
+    type: DataTypes.INTEGER(10),
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+  product_core: {
+    type: DataTypes.CHAR(25),
+    allowNull: false
+  },
+  category_id: {
+    type: DataTypes.SMALLINT(5),
+    allowNull: false
+  },
+  price: {
+    type: DataTypes.DECIMAL(8, 2),
+    allowNull: false
+  },
+  line_price: {
+    type: DataTypes.DECIMAL(8, 2),
+  },
+  is_hot: {
+    type: DataTypes.TINYINT(4),
+  },
+  publish_status: {
+    type: DataTypes.DataTypes.TINYINT(4),
+  },
+  audit_status: {
+    type: DataTypes.TINYINT(4),
+    allowNull: false
+  },
+  is_banner: {
+    type: DataTypes.TINYINT(4),
+  },
+  banner_url: {
+    type: DataTypes.STRING,
+  },
+  memory  : {
+    type: DataTypes.STRING(5),
+  },
+  color: {
+    type: DataTypes.STRING(5),
+  },
+  production_date: {
+    type: DataTypes.DATE
+  },
+  shelf_life: {
+    type: DataTypes.INTEGER(11)
+  },
+  descript: {
+    type: DataTypes.TEXT
+  },
+  indate: {
+    type: DataTypes.DATE
+  },
+
+},
+{ 
+  freezeTableName: true,
+  timestamps: false,
+}
+);
+
+const product_pic_info = sequelize.define('product_pic_info', {
+  product_pic_id: {
+    type: DataTypes.INTEGER(10),
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+  product_id: {
+    type: DataTypes.INTEGER(10),
+    allowNull: false
+  },
+  pic_desc: {
+    type: DataTypes.STRING(50),
+  },
+  pic_url: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  is_master: {
+    type: DataTypes.TINYINT(4),
+  },
+  pic_order: {
+    type: DataTypes.TINYINT(4),
+  },
+  pic_status: {
+    type: DataTypes.TINYINT(4),
+  },
+},
+{ 
+  freezeTableName: true,
+  timestamps: false,
+}
+);
+
+const product_category = sequelize.define('product_category', {
+  category_id: {
+    type: DataTypes.INTEGER(10),
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+  category_name: {
+    type: DataTypes.STRING(10),
+    allowNull: false
+  },
+  category_desc: {
+    type: DataTypes.STRING(50),
+  },
+  category_order: {
+    type: DataTypes.TINYINT(4),
+  },
+  category_status: {
+    type: DataTypes.TINYINT(4),
+  },
+},
+{ 
+  freezeTableName: true,
+  timestamps: false,
+}
+);
+
+
 
 (async () => {
   await sequelize.sync();
@@ -93,5 +220,8 @@ module.exports = {
   sequelize,
   query,
   customerLogin,
-  customer_inf
+  customer_inf,
+  product_info,
+  product_pic_info,
+  product_category
 }

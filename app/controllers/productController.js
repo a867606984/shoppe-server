@@ -8,6 +8,15 @@
 const productDao = require('../models/dao/productDao');
 module.exports = {
   /**
+   * 添加商品
+   * @param {Object} ctx
+   */
+   AddProduct: async ctx => {
+    await productDao.AddProduct(ctx.request.body);
+
+    ctx.success()
+  },
+  /**
    * 获取商品分类
    * @param {Object} ctx
    */

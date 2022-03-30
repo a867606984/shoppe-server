@@ -10,7 +10,41 @@ const productController = require('../../controllers/productController')
 
 let productRouter = new Router();
 
+/**
+   * @swagger
+   * definitions:
+   *  addProductParam:
+   *    properties:
+   *      login_name:
+   *        type: "string"
+   *        description: 用户名
+   *      password:
+   *        type: "string"
+   *        description: 密码
+   *   
+   */
+
 productRouter
+  /**
+   * @swagger
+   * /product/addProduct:
+   *   post:
+   *     summary: 添加商品
+   *     description: ''
+   *     tags:
+   *       - 商品接口
+   *     parameters:
+   *       - name: body
+   *         in: body
+   *         required: true
+   *         description: 
+   *         schema:
+   *          $ref: '#/definitions/addProductParam'
+   *     responses:
+   *       200:
+   *         description: 成功获取
+   */
+  .post('/product/addProduct', productController.AddProduct)
   .post('/product/getAllProduct', productController.GetAllProduct)
   .post('/product/getPromoProduct', productController.GetPromoProduct)
   .post('/product/getHotProduct', productController.GetHotProduct)
