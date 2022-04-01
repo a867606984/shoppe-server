@@ -12,9 +12,18 @@ module.exports = {
    * @param {Object} ctx
    */
    AddProduct: async ctx => {
-    await productDao.AddProduct(ctx.request.body);
 
-    ctx.success()
+    let { product, product_pic } = ctx.request.body
+
+    if(!product || !product_pic){
+      ctx.fail('请填写正确的参数');
+      return
+    }
+
+    let result = await productDao.AddProduct(product, product_pic);
+
+    if(result) ctx.success();
+    else ctx.fail('添加失败');
   },
   /**
    * 获取商品分类
@@ -25,8 +34,36 @@ module.exports = {
 
     ctx.body = {
       code: '001',
-      category
+      category,
     }
+  },
+  /**
+   * 根据条件获取商品列表
+   * @param {Object} ctx
+   */
+  GetProductList: async ctx => {
+    let { pageNum, pageSize, is_hot, category_id, query } = ctx.request.body;
+    
+    if(!Number(pageNum)  || !Number(pageSize)){
+      ctx.fail("参数不正确");
+      return 
+    }
+
+    let result = await productDao.GetProductList(ctx.request.body);
+
+    if(!!result && result.length > 0){
+      for(let i = 0; i < result.length; i++){
+        let { product_id } = result[i];
+
+        let picArr = await productDao.GetDetailsPicture(product_id);
+
+        if(picArr.length > 0) result.pic_url = picArr[0].pic_url;
+      }
+
+    }
+
+    ctx.success(result);
+
   },
   /**
    * 根据商品分类名称获取首页展示的商品信息

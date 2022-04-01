@@ -6,17 +6,80 @@
  * @LastEditTime: 2020-02-27 15:42:52
  */
 const db = require('./db.js');
+const { product_pix, productIncreKey} = require('../../../config');
+let Redis = require('../../middleware/RedisStore')
+let redis = new Redis({db: 1})
+const clearNull = require('../../utils/clearProtoOfNull')
 
 module.exports = {
   // 添加商品
-  AddProduct: async (obj) => {
-    const sql = "select * from category";
-    return await db.query(sql, []);
+  AddProduct: async (product = {}, product_pic = []) => {
+    let t = await db.sequelize.transaction()
+
+    try {
+
+      let incre = await redis.get(productIncreKey);
+
+      let { product_id } = await db.product_info.create({
+        ...product,
+        indate: new Date(),
+        product_core: `${product_pix}${(new Date()).getTime()}${incre}`
+      }, { transaction: t})
+
+      for(let i = 0; i < product_pic.length; i++){
+        
+        await db.product_pic_info.create({
+          product_id,
+          ...product_pic[i]
+        }, { transaction: t})
+       
+      }
+      
+      await t.commit();
+
+      //redis,商品后缀数字递增
+      await redis.incrBy(productIncreKey, 1);
+
+      return true
+    } catch (error) {
+      console.log(error)
+      t.rollback();
+      return false
+    }
   },
   // 连接数据库获取商品分类
   GetCategory: async () => {
     const sql = "select * from category";
     return await db.query(sql, []);
+  },
+  // 连接数据库根据条件获取商品列表
+  GetProductList: async ({pageNum, pageSize, is_hot, category_id, query}) => {
+    let where = {
+        is_hot,
+        category_id,
+        product_name: {
+          [db.sequelize.Op.startsWith]: query  // LIKE 'query%'
+        },
+
+        
+        // [db.sequelize.Op.or]: {
+        //   product_name: {
+        //     [db.sequelize.Op.startsWith]: query  // LIKE 'query%'
+        //   },
+        //   product_title: {
+        //     [db.sequelize.Op.startsWith]: query  // LIKE 'query%'
+        //   } 
+        // }
+    }
+
+    clearNull(where, ['product_name'])
+
+    return await db.product_info.findAll({
+      attributes: ['product_id', 'product_name', 'product_title', 'category_id', 'is_hot'],
+      where,
+      offset: pageNum, 
+      limit: pageSize
+    })
   },
   // 连接数据库根据商品分类名称获取分类id
   GetCategoryId: async (categoryName) => {
@@ -66,8 +129,11 @@ module.exports = {
     return await db.query(sql, id);
   },
   // 连接数据库,根据商品id,获取商品图片
-  GetDetailsPicture: async (productID) => {
-    const sql = "select * from product_picture where product_id = ? ";
-    return await db.query(sql, productID);
+  GetDetailsPicture: async (product_id) => {
+    return await db.product_pic_info.findAll({
+      where: {
+        product_id,
+      },
+    })
   }
 }

@@ -161,7 +161,7 @@ module.exports = {
 
   },
   Test: async ctx => {
-    ctx.success()
+    ctx.success(a)
   },
   Register: async ctx => {
     let { login_name, password } = ctx.request.body;

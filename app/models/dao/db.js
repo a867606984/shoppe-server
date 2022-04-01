@@ -1,6 +1,6 @@
 //https://sequelize.org/v6/index.html  文档
 
-const { Sequelize, DataTypes, QueryTypes   } = require('sequelize');
+const { Sequelize, DataTypes, QueryTypes, Op  } = require('sequelize');
 const { dbConfig } = require('../../../config');
 
 const sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
@@ -8,6 +8,7 @@ const sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.passw
   dialect: 'mysql'/* one of 'mysql' | 'mariadb' | 'postgres' | 'mssql' */
 });
 
+sequelize.Op = Op;
 
 const customerLogin = sequelize.define('customer_login', {
   customer_id: {
@@ -79,6 +80,13 @@ const product_info = sequelize.define('product_info', {
     primaryKey: true,
     allowNull: false
   },
+  product_name: {
+    type: DataTypes.STRING(30),
+    allowNull: false
+  },
+  product_title: {
+    type: DataTypes.STRING(30),
+  },
   product_core: {
     type: DataTypes.CHAR(25),
     allowNull: false
@@ -98,7 +106,7 @@ const product_info = sequelize.define('product_info', {
     type: DataTypes.TINYINT(4),
   },
   publish_status: {
-    type: DataTypes.DataTypes.TINYINT(4),
+    type: DataTypes.TINYINT(4),
   },
   audit_status: {
     type: DataTypes.TINYINT(4),
@@ -156,12 +164,15 @@ const product_pic_info = sequelize.define('product_pic_info', {
   },
   is_master: {
     type: DataTypes.TINYINT(4),
+    defaultValue: 0
   },
   pic_order: {
     type: DataTypes.TINYINT(4),
+    defaultValue: 0
   },
   pic_status: {
     type: DataTypes.TINYINT(4),
+    defaultValue: 1
   },
 },
 { 

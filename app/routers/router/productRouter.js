@@ -15,13 +15,102 @@ let productRouter = new Router();
    * definitions:
    *  addProductParam:
    *    properties:
-   *      login_name:
+   *      product:
+   *        type: 'object'
+   *        properties:
+   *          product_name:
+   *            type: "string"
+   *            description: 商品名称
+   *          product_title:
+   *            type: "string"
+   *            description: 商品简介标题
+   *          category_id:
+   *            type: "number"
+   *            description: 分类ID
+   *          price:
+   *            type: "number"
+   *            description: 商品销售价格
+   *          line_price:
+   *            type: "number"
+   *            description: 商品划线价
+   *          is_hot:
+   *            type: "number"
+   *            description: 是否热门： 0否，1是
+   *          publish_status:
+   *            type: "number"
+   *            description: 上下架状态：0下架，1上架
+   *            default: 1
+   *          audit_status:
+   *            type: "number"
+   *            description: 审核状态：0未审核，1已审核
+   *            default: 1
+   *          is_banner:
+   *            type: "number"
+   *            description: 是否为轮播图：1是，0否
+   *          banner_url:
+   *            type: "string"
+   *            description: 轮播图片路径
+   *          memory:
+   *            type: "string"
+   *            description: 商品内存信息
+   *          color:
+   *            type: "string"
+   *            description: 商品颜色
+   *          production_date:
+   *            type: "string"
+   *            description: 生产日期
+   *            default: Thu Mar 31 2022 16:26:03 GMT+0800 (中国标准时间)
+   *          shelf_life:
+   *            type: "number"
+   *            description: 商品有效期
+   *          descript:
+   *            type: "string"
+   *            description: 商品描述
+   *      product_pic:
+   *        type: 'array'
+   *        items:
+   *            type: 'object'  
+   *            properties:
+   *              pic_url:
+   *                type: "string"
+   *                description: 图片URL
+   *                defalut: http://cpipi.top/image/myshoppe/
+   *              pic_desc:
+   *                type: "string"
+   *                description: 图片描述
+   *              is_master:
+   *                type: "number"
+   *                description: 是否主图：0.非主图,1.主图
+   *                defalut: 0
+   *              pic_order:
+   *                type: "number"
+   *                description: 图片排序
+   *                defalut: 0
+   *              pic_status:
+   *                type: "number"
+   *                description: 图片是否有效：0无效 1有效
+   *                defalut: 1
+   *  getProductListParam:
+   *    properties:
+   *      pageSize:
+   *        type: "number"
+   *        description: 页数
+   *      pageNum:
+   *        type: "number"
+   *        description: 页码
+   *      is_hot:
+   *        type: "number"
+   *        description: 是否热门：1是，0否
+   *        default:
+   *      category_id:
+   *        type: "number"
+   *        description: 商品种类id
+   *        default:
+   *      query:
    *        type: "string"
-   *        description: 用户名
-   *      password:
-   *        type: "string"
-   *        description: 密码
-   *   
+   *        description: 查询参数
+   *        default: ""
+   *
    */
 
 productRouter
@@ -49,8 +138,28 @@ productRouter
   .post('/product/getPromoProduct', productController.GetPromoProduct)
   .post('/product/getHotProduct', productController.GetHotProduct)
   .post('/product/getProductByCategory', productController.GetProductByCategory)
-  .post('/product/getCategory', productController.GetCategory)
   .post('/product/getProductBySearch', productController.GetProductBySearch)
+  /**
+   * @swagger
+   * /product/getProductList:
+   *   post:
+   *     summary: 获取商品列表
+   *     description: ''
+   *     tags:
+   *       - 商品接口
+   *     parameters:
+   *       - name: body
+   *         in: body
+   *         required: true
+   *         description: 
+   *         schema:
+   *          $ref: '#/definitions/getProductListParam'
+   *     responses:
+   *       200:
+   *         description: 成功获取
+   */
+  .post('/product/getProductList', productController.GetProductList)
+  .post('/product/getCategory', productController.GetCategory)
   .post('/product/getDetails', productController.GetDetails)
   .post('/product/getDetailsPicture', productController.GetDetailsPicture)
   

@@ -1,4 +1,4 @@
-let { COOKIEKEY } = require('../../config');
+let { COOKIEKEY, SESSIONKEY } = require('../../config');
 
 let Redis = require('./RedisStore')
 let redis = new Redis()
@@ -12,6 +12,7 @@ const filterUrl = function (url) {
             'users/findUserName',
             'users/findUserInfoById',
             'swagger',
+            'test',
             '.png',
             '.css',
             '.js'
@@ -47,7 +48,7 @@ module.exports = async function(ctx, next){
     }
 
     // 如果有SESSIONID，就去redis里拿数据
-    const redisData = await redis.get(SESSIONID);
+    const redisData = await redis.get(SESSIONKEY + SESSIONID);
 
     if (!redisData) {
         console.log('登录已过期');

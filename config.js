@@ -29,7 +29,9 @@ module.exports = {
   COOKIEKEY: 'sess:store:', //cookie的key
   SESSIONKEY: 'sess:store:',
   product_pix: '010', //商品编号前缀
+  productIncreKey: 'product_no_incre', //商品编号自增后缀
   order_pix: '011', //订单编号前缀
+  orderIncreKey: 'order_no_incre', //订单编号自增后缀
   warehouse_pix: '012' //仓库编号前缀
 
 }

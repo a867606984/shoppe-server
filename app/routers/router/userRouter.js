@@ -113,6 +113,18 @@ userRouter
    */
   .post('/users/register', userController.Register)
   .get('/users/sessionTest', userController.SessionTest)
+  /**
+   * @swagger
+   * /users/test:
+   *   get:
+   *     summary: 测试
+   *     description: ''
+   *     tags:
+   *       - 用户接口
+   *     responses:
+   *       200:
+   *         description: 成功获取
+   */
   .get('/users/test', userController.Test)
 
 module.exports = userRouter;

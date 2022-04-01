@@ -46,11 +46,11 @@ app.use(session({
   cookie: {
     path: '/',
     httpOnly: true,
-    maxAge: '24 * 60 * 60 * 1000'
+    maxAge: '30 * 24 * 60 * 60 * 1000'
   },
   key: COOKIEKEY,
   prefix: SESSIONKEY,
-  ttl: 24 * 60 * 60 * 1000,
+  ttl: 30 * 24 * 60 * 60 * 1000,
   store: redisStore({
     ...redisConfig,
     

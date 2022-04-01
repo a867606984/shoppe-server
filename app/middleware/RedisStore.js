@@ -2,8 +2,11 @@ const Redis = require('koa-redis');
 let { redisConfig } = require('../../config');
 
 class RedisStore {
-    constructor() {
-        this.redis = new Redis(redisConfig);
+    constructor(opts) {
+        this.redis = new Redis({
+            ...redisConfig,
+            ...opts
+        });
     }
  
     async get(sid, ctx) {
@@ -11,12 +14,25 @@ class RedisStore {
         return data;
     }
  
-    async set(sid, val, maxAge) {
+    async set(sid, val) {
         try {
-            console.log(`${sid}`);
-            // Use redis set EX to automatically drop expired sessions
-            await this.redis.set(`${sid}`, JSON.stringify(val), 'EX', maxAge);
+            await this.redis.client.set(`${sid}`, JSON.stringify(val));
         } catch (e) {}
+        return sid;
+    }
+    async setex(sid, val, maxAge){
+        try {
+            await this.redis.client.setex(`${sid}`, maxAge, maxAgeJSON.stringify(val));
+        } catch (e) {}
+        return sid;
+    }
+    async incrBy(sid, increment){
+        try {
+            await this.redis.client.incrby(sid, increment)
+
+        } catch (e) {
+            console.log(e, 'incrby:error')
+        }
         return sid;
     }
  
