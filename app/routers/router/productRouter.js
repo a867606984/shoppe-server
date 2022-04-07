@@ -110,6 +110,17 @@ let productRouter = new Router();
    *        type: "string"
    *        description: 查询参数
    *        default: ""
+   *  collectProductParam:
+   *    properties:
+   *      product_id:
+   *        type: "number"
+   *        description: 商品id
+   *      customer_id:
+   *        type: "number"
+   *        description: 用户id
+   *      is_collect:
+   *        type: "number"
+   *        description: 是否收藏：0取消，1收藏
    *
    */
 
@@ -159,8 +170,92 @@ productRouter
    *         description: 成功获取
    */
   .post('/product/getProductList', productController.GetProductList)
-  .post('/product/getCategory', productController.GetCategory)
-  .post('/product/getDetails', productController.GetDetails)
-  .post('/product/getDetailsPicture', productController.GetDetailsPicture)
+  /**
+   * @swagger
+   * /product/getCategory:
+   *   get:
+   *     summary: 获取商品种类
+   *     description: ''
+   *     tags:
+   *       - 商品接口
+   *     responses:
+   *       200:
+   *         description: 成功获取
+   */
+  .get('/product/getCategory', productController.GetCategory)
+  /**
+   * @swagger
+   * /product/getDetails:
+   *   get:
+   *     summary: 获取商品详情
+   *     description: ''
+   *     tags:
+   *       - 商品接口
+   *     parameters:
+   *       - name: product_id
+   *         in: query
+   *         required: true
+   *         description: 
+   *     responses:
+   *       200:
+   *         description: 成功获取
+   */
+  .get('/product/getDetails', productController.GetDetails)
+  /**
+   * @swagger
+   * /product/getDetailsPicture:
+   *   get:
+   *     summary: 获取商品图片
+   *     description: ''
+   *     tags:
+   *       - 商品接口
+   *     parameters:
+   *       - name: product_id
+   *         in: query
+   *         required: true
+   *         description: 
+   *     responses:
+   *       200:
+   *         description: 成功获取
+   */
+  .get('/product/getDetailsPicture', productController.GetDetailsPicture)
+  /**
+   * @swagger
+   * /product/collect:
+   *   post:
+   *     summary: 商品收藏
+   *     description: ''
+   *     tags:
+   *       - 商品接口
+   *     parameters:
+   *       - name: body
+   *         in: body
+   *         required: true
+   *         description: 
+   *         schema:
+   *          $ref: '#/definitions/collectProductParam'
+   *     responses:
+   *       200:
+   *         description: 成功获取
+   */
+   .post('/product/collect', productController.CollectProduct)
+   /**
+   * @swagger
+   * /product/getUserCollect:
+   *   get:
+   *     summary: 获取该用户商品收藏
+   *     description: ''
+   *     tags:
+   *       - 商品接口
+   *     parameters:
+   *       - name: customer_id
+   *         in: query
+   *         required: true
+   *         description: 
+   *     responses:
+   *       200:
+   *         description: 成功获取
+   */
+  .get('/product/getUserCollect', productController.GetUserCollect)
   
 module.exports = productRouter;

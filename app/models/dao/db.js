@@ -5,10 +5,12 @@ const { dbConfig } = require('../../../config');
 
 const sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
   host: dbConfig.host,
-  dialect: 'mysql'/* one of 'mysql' | 'mariadb' | 'postgres' | 'mssql' */
+  dialect: 'mysql', /* one of 'mysql' | 'mariadb' | 'postgres' | 'mssql' */
+  operatorsAliases: {
+    $like: Op.like,
+    $and: Op.and
+  }
 });
-
-sequelize.Op = Op;
 
 const customerLogin = sequelize.define('customer_login', {
   customer_id: {
@@ -79,9 +81,9 @@ const product_info = sequelize.define('product_info', {
     autoIncrement: true,
     primaryKey: true,
     allowNull: false
-  },
+  },  
   product_name: {
-    type: DataTypes.STRING(30),
+    type: DataTypes.STRING(20),
     allowNull: false
   },
   product_title: {
@@ -110,7 +112,6 @@ const product_info = sequelize.define('product_info', {
   },
   audit_status: {
     type: DataTypes.TINYINT(4),
-    allowNull: false
   },
   is_banner: {
     type: DataTypes.TINYINT(4),
@@ -131,7 +132,8 @@ const product_info = sequelize.define('product_info', {
     type: DataTypes.INTEGER(11)
   },
   descript: {
-    type: DataTypes.TEXT
+    type: DataTypes.TEXT,
+    allowNull: false,
   },
   indate: {
     type: DataTypes.DATE
@@ -208,6 +210,31 @@ const product_category = sequelize.define('product_category', {
 }
 );
 
+const product_collect = sequelize.define('product_collect', {
+  id: {
+    type: DataTypes.INTEGER(10),
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+  customer_id: {
+    type: DataTypes.INTEGER(10),
+    allowNull: false
+  },
+  product_id: {
+    type: DataTypes.INTEGER(10),
+    allowNull: false
+  },
+  is_collect: {
+    type: DataTypes.TINYINT(1),
+    defaultValue: 1
+  },
+},
+{ 
+  freezeTableName: true,
+  timestamps: false,
+}
+);
 
 
 (async () => {
@@ -234,5 +261,6 @@ module.exports = {
   customer_inf,
   product_info,
   product_pic_info,
-  product_category
+  product_category,
+  product_collect
 }

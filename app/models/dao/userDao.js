@@ -30,15 +30,17 @@ module.exports = {
       }
     });
 
+    return info
+  },
+  // 连接数据库根据id查询用户信息
+  FindUserNameById: async (customer_id) => {
     let { login_name } = await db.customerLogin.findOne({
       where: {
         customer_id
       }
     });
-
-    info.setDataValue('login_name', login_name)
-
-    return info
+    
+    return login_name
   },
   // 连接数据库插入用户信息
   Register: async (login_name, password) => {
@@ -58,6 +60,7 @@ module.exports = {
 
       return true
     } catch (error) {
+      console.log(error)
       t.rollback();
     }
   }

@@ -146,6 +146,14 @@ module.exports = {
     
     let result = await userDao.FindUserInfoById(customer_id);
 
+    if(!result){
+      ctx.fail('没有该用户')
+      return
+    }
+    
+    let login_name = await userDao.FindUserNameById(customer_id);
+    
+    result.setDataValue('login_name', login_name)
      
     ctx.success(result)
   },

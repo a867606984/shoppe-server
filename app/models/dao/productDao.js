@@ -8,7 +8,7 @@
 const db = require('./db.js');
 const { product_pix, productIncreKey} = require('../../../config');
 let Redis = require('../../middleware/RedisStore')
-let redis = new Redis({db: 1})
+let redis = new Redis({db: 1}) //索引为1的redis数据库
 const clearNull = require('../../utils/clearProtoOfNull')
 
 module.exports = {
@@ -49,8 +49,7 @@ module.exports = {
   },
   // 连接数据库获取商品分类
   GetCategory: async () => {
-    const sql = "select * from category";
-    return await db.query(sql, []);
+    return await db.product_category.findAll()
   },
   // 连接数据库根据条件获取商品列表
   GetProductList: async ({pageNum, pageSize, is_hot, category_id, query}) => {
@@ -58,10 +57,8 @@ module.exports = {
         is_hot,
         category_id,
         product_name: {
-          [db.sequelize.Op.startsWith]: query  // LIKE 'query%'
+          $like: `%${query}`  // LIKE '%query'
         },
-
-        
         // [db.sequelize.Op.or]: {
         //   product_name: {
         //     [db.sequelize.Op.startsWith]: query  // LIKE 'query%'
@@ -72,13 +69,13 @@ module.exports = {
         // }
     }
 
-    clearNull(where, ['product_name'])
+    clearNull(where, [`${!query ? 'product_name' : null}`])
 
     return await db.product_info.findAll({
       attributes: ['product_id', 'product_name', 'product_title', 'category_id', 'is_hot'],
       where,
-      offset: pageNum, 
-      limit: pageSize
+      offset: (pageNum - 1) * pageSize, 
+      limit: pageSize - 1
     })
   },
   // 连接数据库根据商品分类名称获取分类id
@@ -124,9 +121,12 @@ module.exports = {
     return await db.query(sql, []);
   },
   // 连接数据库,根据商品id,获取商品详细信息
-  GetProductById: async (id) => {
-    const sql = 'select * from product where product_id = ?';
-    return await db.query(sql, id);
+  GetProductById: async (product_id) => {
+    return await db.product_info.findOne({
+      where: {
+        product_id,
+      },
+    })
   },
   // 连接数据库,根据商品id,获取商品图片
   GetDetailsPicture: async (product_id) => {
@@ -135,5 +135,39 @@ module.exports = {
         product_id,
       },
     })
-  }
+  },
+  //连接数据库,根据商品id,用户id进行商品收藏
+  CollectProduct: async ({ is_collect, product_id, customer_id }) => {
+    return await db.product_collect.create({
+      product_id,
+      customer_id
+    })
+  },
+  //连接数据库,根据商品id,用户id查找商品收藏
+  GetCollectProduct: async ({ is_collect, product_id, customer_id }) => {
+    return await db.product_collect.findOne({
+      where: {
+        product_id,
+        customer_id
+      }
+    })
+  },
+  //连接数据库,根据商品id,用户id删除商品收藏
+  DestroyCollectProduct: async ({ is_collect, product_id, customer_id }) => {
+    return await db.product_collect.destroy({
+      where: {
+        $and: [
+          { product_id },
+          { customer_id },
+        ]
+      }
+    })
+  },
+  GetUserCollect: async (customer_id) => {
+    return await db.product_collect.findAll({
+      where: {
+        customer_id
+      }
+    })
+  },
 }

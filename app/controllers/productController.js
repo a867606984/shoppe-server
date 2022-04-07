@@ -5,6 +5,7 @@
  * @LastEditors: hai-27
  * @LastEditTime: 2020-02-27 15:41:11
  */
+const { result } = require('lodash');
 const productDao = require('../models/dao/productDao');
 module.exports = {
   /**
@@ -30,12 +31,9 @@ module.exports = {
    * @param {Object} ctx
    */
   GetCategory: async ctx => {
-    const category = await productDao.GetCategory();
+    const result = await productDao.GetCategory();
 
-    ctx.body = {
-      code: '001',
-      category,
-    }
+    ctx.success(result)
   },
   /**
    * 根据条件获取商品列表
@@ -57,12 +55,17 @@ module.exports = {
 
         let picArr = await productDao.GetDetailsPicture(product_id);
 
-        if(picArr.length > 0) result.pic_url = picArr[0].pic_url;
+        if(picArr.length > 0) result[i].setDataValue('pic_url', picArr[0].pic_url)
       }
 
     }
 
-    ctx.success(result);
+    ctx.success({
+      pageNum,
+      pageSize,
+      total: result.length,
+      content: result
+    });
 
   },
   /**
@@ -184,27 +187,85 @@ module.exports = {
    * @param {Object} ctx
    */
   GetDetails: async ctx => {
-    let { productID } = ctx.request.body;
+    let { product_id } = ctx.request.query;
 
-    const Product = await productDao.GetProductById(productID);
-
-    ctx.body = {
-      code: '001',
-      Product,
+    if(!product_id){
+      ctx.fail('请填写正确的参数')
+      return
     }
+
+    const result = await productDao.GetProductById(product_id);
+
+    ctx.success(result)
   },
   /**
    * 根据商品id,获取商品图片,用于食品详情的页面展示
    * @param {Object} ctx
    */
   GetDetailsPicture: async ctx => {
-    let { productID } = ctx.request.body;
+    let { product_id } = ctx.request.query;
 
-    const ProductPicture = await productDao.GetDetailsPicture(productID);
-
-    ctx.body = {
-      code: '001',
-      ProductPicture,
+    if(!product_id){
+      ctx.fail('请填写正确的参数')
+      return
     }
-  }
+
+    const result = await productDao.GetDetailsPicture(product_id);
+
+    ctx.success(result)
+  },
+  /**
+   * 根据商品id,用户id进行收藏
+   * @param {Object} ctx
+   */
+  CollectProduct: async ctx => {
+    let { is_collect, product_id, customer_id } = ctx.request.body;
+
+    if(!product_id || !customer_id) {
+      ctx.fail('请填写正确参数')
+      return
+    }
+
+    let isCollect = await productDao.GetCollectProduct(ctx.request.body);
+
+    let result = null;
+
+    if(!isCollect && is_collect == 1){
+      result = await productDao.CollectProduct(ctx.request.body);
+    }
+
+    if(isCollect && is_collect == 0){
+      result = await productDao.DestroyCollectProduct(ctx.request.body);
+    }
+
+    ctx.success('操作成功');
+  },
+  /**
+   * 根据用户id获取商品收藏
+   * @param {Object} ctx
+   */
+   GetUserCollect: async ctx => {
+    let { customer_id } = ctx.request.query;
+
+    if(!customer_id) {
+      ctx.fail('请填写正确参数')
+      return
+    }
+
+    let result = await productDao.GetUserCollect(customer_id);
+
+    for(let i = 0; i < result.length; i++){
+      let { product_id } = result[i];
+
+      let data = await productDao.GetProductById(product_id)
+
+      if(data) {
+        result[i].setDataValue('product_name', data.product_name);
+        result[i].setDataValue('product_title', data.product_title);
+        result[i].setDataValue('price', data.price);
+      }
+    }
+
+    ctx.success(result);
+  },
 }
