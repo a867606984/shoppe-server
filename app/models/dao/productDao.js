@@ -6,7 +6,7 @@
  * @LastEditTime: 2020-02-27 15:42:52
  */
 const db = require('./db.js');
-const { product_pix, productIncreKey} = require('../../../config');
+const { product_no_pix, productIncreKey} = require('../../../config');
 let Redis = require('../../middleware/RedisStore')
 let redis = new Redis({db: 1}) //索引为1的redis数据库
 const clearNull = require('../../utils/clearProtoOfNull')
@@ -23,7 +23,7 @@ module.exports = {
       let { product_id } = await db.product_info.create({
         ...product,
         indate: new Date(),
-        product_core: `${product_pix}${(new Date()).getTime()}${incre}`
+        product_core: `${product_no_pix}${(new Date()).getTime()}${incre}`
       }, { transaction: t})
 
       for(let i = 0; i < product_pic.length; i++){

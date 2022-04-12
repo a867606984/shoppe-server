@@ -35,7 +35,27 @@ class RedisStore {
         }
         return sid;
     }
- 
+    async hexists(sid, field) {
+        let data = await this.redis.hexists(`${sid}`, field);
+        return data;
+    }
+    async hmset(sid, fields = {}){
+        try {
+            await this.redis.client.hmset(`${sid}`, fields);
+            return true
+        } catch (e) {
+            
+        }
+        return false;
+    }
+    async hget(sid, field) {
+        let data = await this.redis.hget(`${sid}`, field);
+        return data;
+    }
+    async hgetall(sid) {
+        let data = await this.redis.hget(`${sid}`);
+        return data;
+    }
     async destroy(sid, ctx) {
         return await this.redis.destroy(`${sid}`);
     }

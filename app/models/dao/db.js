@@ -138,6 +138,9 @@ const product_info = sequelize.define('product_info', {
   indate: {
     type: DataTypes.DATE
   },
+  limit_num: {
+    type: DataTypes.SMALLINT(4)
+  }
 
 },
 { 
@@ -236,9 +239,61 @@ const product_collect = sequelize.define('product_collect', {
 }
 );
 
+const warehouse_product = sequelize.define('warehouse_product', {
+  wp_id: {
+    type: DataTypes.INTEGER(10),
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+  product_id: {
+    type: DataTypes.INTEGER(10),
+    allowNull: false
+  },
+  w_id: {
+    type: DataTypes.SMALLINT(5),
+    allowNull: false
+  },
+  current_cnt: {
+    type: DataTypes.TINYINT(1),
+    allowNull: false
+  },
+},
+{ 
+  freezeTableName: true,
+  timestamps: false,
+}
+);
+
+const order_cart = sequelize.define('order_cart', {
+  cart_id: {
+    type: DataTypes.INTEGER(10),
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+  product_id: {
+    type: DataTypes.INTEGER(10),
+    allowNull: false
+  },
+  customer_id: {
+    type: DataTypes.INTEGER(10),
+    allowNull: false
+  },
+  product_amount: {
+    type: DataTypes.TINYINT(11),
+    allowNull: false
+  },
+
+},
+{ 
+  freezeTableName: true,
+  timestamps: false,
+}
+);
 
 (async () => {
-  await sequelize.sync();
+  await sequelize.sync(); //参数force不能设置为true，不然会删除数据库数据！！！
   // 这里是代码
  
 })()
@@ -262,5 +317,7 @@ module.exports = {
   product_info,
   product_pic_info,
   product_category,
-  product_collect
+  product_collect,
+  warehouse_product,
+  order_cart
 }
