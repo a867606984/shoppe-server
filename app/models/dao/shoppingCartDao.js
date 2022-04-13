@@ -11,15 +11,20 @@ let redis = new Redis({db: 1}) //索引为1的redis数据库
 
 module.exports = {
   // 获取购物车信息
-  GetShoppingCart: async (user_id) => {
-    const sql = 'select * from shoppingCart where user_id = ?';
-    return await db.query(sql, user_id);
+  GetShoppingCart: async (customer_id) => {
+    return await db.order_cart.findAll({
+      where: {
+        customer_id
+      }
+    })
   },
   // 查询用户的购物车的某个商品
   FindShoppingCart: async (customer_id, product_id) => {
-    return await db.order_cart.findAll({
-      customer_id,
-      product_id
+    return await db.order_cart.findOne({
+      where: {
+        customer_id,
+        product_id
+      }
     })
   },
   // 新插入购物车信息
@@ -33,14 +38,21 @@ module.exports = {
   // 更新购物车商品数量
   UpdateShoppingCart: async (NewNum, customer_id, product_id) => {
     return await db.order_cart.update({
-      product_amount: NewNum,
-      customer_id,
-      product_id
+        product_amount: NewNum,   
+    }, {
+      where: {
+        customer_id,
+        product_id
+      }
     })
   },
   // 删除购物车信息
-  DeleteShoppingCart: async (user_id, product_id) => {
-    const sql = 'delete from shoppingCart where user_id =? and product_id =?';
-    return await db.query(sql, [user_id, product_id]);
+  DeleteShoppingCart: async (customer_id, product_id) => {
+    return await db.order_cart.destroy({
+      where: {
+        customer_id,
+        product_id
+      }
+    })
   }
 }

@@ -124,7 +124,7 @@ module.exports = {
   GetProductById: async (product_id) => {
     return await db.product_info.findOne({
       where: {
-        product_id,
+        product_id
       },
     })
   },

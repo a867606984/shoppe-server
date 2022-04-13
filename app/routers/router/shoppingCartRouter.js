@@ -19,13 +19,32 @@ let shoppingCartRouter = new Router();
    *        description: 用户id
    *      product_id:
    *        type: "number"
-   *        description: 产品id
+   *        description: 商品id
+   *  deleteShoppingCartParam:
+   *    properties:
+   *      customer_id:
+   *        type: "number"
+   *        description: 用户id
+   *      product_id:
+   *        type: "number"
+   *        description: 商品id
+   *  updateShoppingCartParam:
+   *    properties:
+   *      customer_id:
+   *        type: "number"
+   *        description: 用户id
+   *      product_id:
+   *        type: "number"
+   *        description: 商品id
+   *      num:
+   *        type: "number"
+   *        description: 商品数量
    *   
    */
 shoppingCartRouter
   /**
    * @swagger
-   * /shoppingCart/getShoppingCart:
+   * /user/shoppingCart/getShoppingCart:
    *   get:
    *     summary: 获取该用户购物车
    *     description: ''
@@ -40,10 +59,10 @@ shoppingCartRouter
    *       200:
    *         description: 成功获取
    */
-  .get('/user/shoppingCart/addShoppingCart', shoppingCartController.GetShoppingCart)
+  .get('/user/shoppingCart/getShoppingCart', shoppingCartController.GetShoppingCart)
   /**
    * @swagger
-   * /shoppingCart/addShoppingCart:
+   * /user/shoppingCart/addShoppingCart:
    *   post:
    *     summary: 添加商品到购物车
    *     description: ''
@@ -61,7 +80,45 @@ shoppingCartRouter
    *         description: 成功获取
    */
   .post('/user/shoppingCart/addShoppingCart', shoppingCartController.AddShoppingCart)
+  /**
+   * @swagger
+   * /user/shoppingCart/deleteShoppingCart:
+   *   post:
+   *     summary: 从购物车删除商品
+   *     description: ''
+   *     tags:
+   *       - 购物车接口
+   *     parameters:
+   *       - name: body
+   *         in: body
+   *         required: true
+   *         description: 
+   *         schema:
+   *          $ref: '#/definitions/deleteShoppingCartParam'
+   *     responses:
+   *       200:
+   *         description: 成功获取
+   */
   .post('/user/shoppingCart/deleteShoppingCart', shoppingCartController.DeleteShoppingCart)
+  /**
+   * @swagger
+   * /user/shoppingCart/updateShoppingCart:
+   *   post:
+   *     summary: 从购物车更新商品
+   *     description: ''
+   *     tags:
+   *       - 购物车接口
+   *     parameters:
+   *       - name: body
+   *         in: body
+   *         required: true
+   *         description: 
+   *         schema:
+   *          $ref: '#/definitions/updateShoppingCartParam'
+   *     responses:
+   *       200:
+   *         description: 成功获取
+   */
   .post('/user/shoppingCart/updateShoppingCart', shoppingCartController.UpdateShoppingCart)
 
 module.exports = shoppingCartRouter;
