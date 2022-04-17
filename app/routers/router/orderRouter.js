@@ -10,8 +10,40 @@ const orderController = require('../../controllers/orderController')
 
 let orderRouter = new Router();
 
+/**
+   * @swagger
+   * definitions:
+   *  addOrderParam:
+   *    properties:
+   *      customer_id:
+   *        type: "string"
+   *        description: 用户id
+   *      product_id:
+   *        type: "string"
+   *        description: 商品id
+   *   
+   */
 orderRouter
   .post('/user/order/getOrder', orderController.GetOrder)
+  /**
+   * @swagger
+   * /user/order/addOrder:
+   *   post:
+   *     summary: 添加订单
+   *     description: ''
+   *     tags:
+   *       - 订单接口
+   *     parameters:
+   *       - name: body
+   *         in: body
+   *         required: true
+   *         description: 
+   *         schema:
+   *          $ref: '#/definitions/addOrderParam'
+   *     responses:
+   *       200:
+   *         description: 成功获取
+   */
   .post('/user/order/addOrder', orderController.AddOrder)
 
 module.exports = orderRouter;

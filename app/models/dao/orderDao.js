@@ -26,5 +26,24 @@ module.exports = {
     }
 
     return await db.query(sql, data);
-  }
+  },
+  // 连接数据库获取该用户某个商品已购买数量
+  GetProductBuyCnt: async (customer_id, product_id) => {
+    return await db.order_master.findAll({
+      // attributes: ['product_cnt'],
+      
+      where:{
+        customer_id,
+      },
+      include: {
+        model: db.order_detail,
+        where: {
+          product_id
+        },
+        right: true,
+        required: false
+      }
+    })
+    
+  },
 }

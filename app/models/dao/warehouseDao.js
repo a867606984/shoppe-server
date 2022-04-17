@@ -46,5 +46,16 @@ module.exports = {
     }
     return false
   },
-
+  // 连接redis数据库根据产品ID查库存数量
+  GetCacheProductCount: async (product_id) => {
+    return await redis.hgetall(`${product_good_pix}${product_id}`)
+  },
+  // 连接数据库根据产品ID查库存数量
+  GetProductCount: async (product_id) => {
+    return await db.warehouse_product.findOne({
+      where: {
+        product_id
+      }
+    })
+  }
 }

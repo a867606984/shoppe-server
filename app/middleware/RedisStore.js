@@ -49,11 +49,11 @@ class RedisStore {
         return false;
     }
     async hget(sid, field) {
-        let data = await this.redis.hget(`${sid}`, field);
+        let data = await this.redis.client.hget(`${sid}`, field);
         return data;
     }
     async hgetall(sid) {
-        let data = await this.redis.hget(`${sid}`);
+        let data = await this.redis.client.hgetall(`${sid}`);
         return data;
     }
     async destroy(sid, ctx) {

@@ -16,3 +16,4 @@ collectRouter
   .post('/user/collect/deleteCollect', collectController.DeleteCollect)
 
 module.exports = collectRouter;
+

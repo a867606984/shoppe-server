@@ -292,10 +292,117 @@ const order_cart = sequelize.define('order_cart', {
 }
 );
 
+const order_master = sequelize.define('order_master', {
+  order_id: {
+    type: DataTypes.INTEGER(10),
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+  order_sn: {
+    type: DataTypes.CHAR(25),
+    allowNull: false
+  },
+  customer_id: {
+    type: DataTypes.INTEGER(10),
+    allowNull: false
+  },
+  shipping_user: {
+    type: DataTypes.STRING(10),
+    allowNull: false
+  },
+  province: {
+    type: DataTypes.SMALLINT(6),
+    allowNull: false
+  },
+  city: {
+    type: DataTypes.SMALLINT(6),
+    allowNull: false
+  },
+  district: {
+    type: DataTypes.SMALLINT(6),
+    allowNull: false
+  },
+  address: {
+    type: DataTypes.STRING(100),
+    allowNull: false
+  },
+  payment_method: {
+    type: DataTypes.TINYINT(4),
+    allowNull: false
+  },
+  district_money: {
+    type: DataTypes.DECIMAL(8, 2),
+  },
+  shipping_money: {
+    type: DataTypes.DECIMAL(8, 2),
+  },
+  payment_money: {
+    type: DataTypes.DECIMAL(8, 2),
+    allowNull: false
+  },
+  shipping_comp_name: {
+    type: DataTypes.STRING(10),
+    allowNull: false
+  },
+  shipping_sn: {
+    type: DataTypes.STRING(50),
+    allowNull: false
+  },
+  pay_time: {
+    type: DataTypes.DATE,
+    allowNull: false
+  },
+  order_status: {
+    type: DataTypes.TINYINT(4),
+  },
+  invoice_time: {
+    type: DataTypes.STRING(100),
+  },
+},
+{ 
+  freezeTableName: true,
+  timestamps: false,
+}
+);
+
+const order_detail = sequelize.define('order_detail', {
+  order_id: {
+    type: DataTypes.INTEGER(10),
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+  product_id: {
+    type: DataTypes.INTEGER(10),
+    allowNull: false
+  },
+  product_cnt: {
+    type: DataTypes.TINYINT(11),
+    allowNull: false
+  },
+  product_price: {
+    type: DataTypes.DECIMAL(8, 2),
+    allowNull: false
+  },
+},
+{ 
+  freezeTableName: true,
+  timestamps: false,
+}
+);
+
+
 (async () => {
   await sequelize.sync(); //参数force不能设置为true，不然会删除数据库数据！！！
   // 这里是代码
  
+  await order_master.hasOne(order_detail, {
+      foreignKey: 'order_id'
+  });
+  await order_detail.belongsTo(order_master, {
+    foreignKey: 'order_id'
+  });
 })()
 
 const query = function (sql, replacements, type = 'SELECT'){
@@ -319,5 +426,7 @@ module.exports = {
   product_category,
   product_collect,
   warehouse_product,
-  order_cart
+  order_cart,
+  order_master,
+  order_detail
 }

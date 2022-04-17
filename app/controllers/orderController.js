@@ -7,6 +7,7 @@
  */
 const orderDao = require('../models/dao/orderDao');
 const shoppingCartDao = require('../models/dao/shoppingCartDao');
+const warehouseDao = require('../models/dao/warehouseDao');
 const productDao = require('../models/dao/productDao');
 const checkLogin = require('../middleware/checkLogin');
 
@@ -68,59 +69,51 @@ module.exports = {
    * @param {Object} ctx
    */
   AddOrder: async (ctx) => {
-    let { user_id, products } = ctx.request.body;
-    // 校验用户是否登录
-    if (!checkLogin(ctx, user_id)) {
-      return;
+
+    let { customer_id, products } = ctx.request.body;
+    
+    
+    if(!customer_id || !products){
+      ctx.fail('请填写正确的参数')
     }
 
-    // 获取当前时间戳
-    const timeTemp = new Date().getTime();
-    // 生成订单id：用户id+时间戳(string)
-    const orderID = +("" + user_id + timeTemp);
+    products = products.split(',').filter(item=>item); // [1, 2, 3]，商品id列表
 
-    let data = [];
-    // 根据数据库表结构生成字段信息
-    for (let i = 0; i < products.length; i++) {
-      const temp = products[i];
-      let product = [orderID, user_id, temp.productID, temp.num, temp.price, timeTemp];
-      data.push(...product);
-    }
+    
+    for(let i = 0; i < products.length; i++){
+      let { product_name, limit_num } = await productDao.GetProductById(products[i]) //商品详情
+      let whProduct = await warehouseDao.GetCacheProductCount(products[i]) //商品库存信息
 
-    try {
-      // 把订单信息插入数据库
-      const result = await orderDao.AddOrder(products.length, data);
-
-      // 插入成功
-      if (result.affectedRows == products.length) {
-        //删除购物车
-        let rows = 0;
-        for (let i = 0; i < products.length; i++) {
-          const temp = products[i];
-          const res = await shoppingCartDao.DeleteShoppingCart(user_id, temp.productID);
-          rows += res.affectedRows;
-        }
-        //判断删除购物车是否成功
-        if (rows != products.length) {
-          ctx.body = {
-            code: '002',
-            msg: '购买成功,但购物车没有更新成功'
-          }
-          return;
-        }
-
-        ctx.body = {
-          code: '001',
-          msg: '购买成功'
-        }
-      } else {
-        ctx.body = {
-          code: '004',
-          msg: '购买失败,未知原因'
-        }
+      //检查库存是否卖完
+      if(whProduct.current_cnt == 0){
+        ctx.fail(`${product_name}： 该产品已经卖完了！`)
+        return
       }
-    } catch (error) {
-      reject(error);
+
+      //某件商品是否达到购买限制的数目
+      let orderList = await orderDao.GetProductBuyCnt(customer_id, products[i]) //获取该用户该商品id的信息列表
+      let sum = 0;
+      orderList.forEach(item => {
+        sum += item.product.cnt
+      })
+      if(sum >= limit_num) {
+        ctx.fail(`${product_name}： 该产品你已超出购买数目！`)
+        return 
+      }
+
+      //购买数 是否  超过了  库存数
+      let { product_amount } = await shoppingCartDao.FindShoppingCart(customer_id, products[i]); //获取该用户该商品购物车信息
+      if(product_amount > whProduct.current_cnt){
+        ctx.fail(`${product_name}： 该产品仅剩${whProduct.current_cnt}！`)
+        return 
+      }
+
+
     }
+
+    
+    
+
+
   }
 }
