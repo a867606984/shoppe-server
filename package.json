@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@koa/cors": "^3.2.0",
+    "ioredis": "^5.0.4",
     "koa": "^2.11.0",
     "koa-body": "^4.1.1",
     "koa-generic-session": "^2.3.0",
@@ -24,6 +25,7 @@
     "mysql2": "^2.3.3",
     "nodemon": "^2.0.15",
     "redis": "^4.0.4",
+    "redlock": "^5.0.0-beta.2",
     "request": "^2.88.2",
     "request-promise": "^4.2.5",
     "sequelize": "^6.17.0",

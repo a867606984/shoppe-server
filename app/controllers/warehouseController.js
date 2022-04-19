@@ -14,7 +14,7 @@ module.exports = {
    * 根据仓库id和产品ID和数量添加库存
    * @param {Object} ctx
    */
-  AddProductCount: async ctx => {
+  AddProduct: async ctx => {
 
     let { product_id, w_id, count } = ctx.request.body;
     
@@ -22,7 +22,7 @@ module.exports = {
       ctx.fail('参数不正确')
       return
     }
-    let result = await warehouseDao.AddProductCount(ctx.request.body)
+    let result = await warehouseDao.AddProduct(ctx.request.body)
     
     if(result) ctx.success();
     else ctx.fail('添加失败')

@@ -13,7 +13,7 @@ let warehouseRouter = new Router();
 /**
    * @swagger
    * definitions:
-   *  addProductCountParam:
+   *  addProductParam:
    *    properties:
    *      product_id:
    *        type: "number"
@@ -30,7 +30,7 @@ let warehouseRouter = new Router();
 warehouseRouter
   /**
    * @swagger
-   * /warehouse/addProductCount:
+   * /warehouse/addProduct:
    *   post:
    *     summary: 添加库存
    *     description: ''
@@ -42,12 +42,12 @@ warehouseRouter
    *         required: false
    *         description: 
    *         schema:
-   *          $ref: '#/definitions/addProductCountParam'
+   *          $ref: '#/definitions/addProductParam'
    *     responses:
    *       200:
    *         description: 成功获取
    */
-  .post('/warehouse/addProductCount', warehouseController.AddProductCount)
+  .post('/warehouse/addProduct', warehouseController.AddProduct)
  
 
 module.exports = warehouseRouter;

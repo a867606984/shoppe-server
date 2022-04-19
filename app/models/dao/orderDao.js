@@ -27,8 +27,8 @@ module.exports = {
 
     return await db.query(sql, data);
   },
-  // 连接数据库获取该用户某个商品已购买数量
-  GetProductBuyCnt: async (customer_id, product_id) => {
+  // 连接数据库获取该用户某个商品
+  GetUserProductList: async (customer_id, product_id) => {
     return await db.order_master.findAll({
       // attributes: ['product_cnt'],
       
@@ -46,4 +46,5 @@ module.exports = {
     })
     
   },
+ 
 }

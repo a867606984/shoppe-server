@@ -37,7 +37,7 @@ module.exports = {
       
       await t.commit();
 
-      //redis,商品后缀数字递增
+      //redis,商品编号后缀数字递增
       await redis.incrBy(productIncreKey, 1);
 
       return true

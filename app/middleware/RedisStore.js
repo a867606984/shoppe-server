@@ -1,4 +1,4 @@
-const Redis = require('koa-redis');
+const Redis = require('ioredis');
 let { redisConfig } = require('../../config');
 
 class RedisStore {
@@ -8,27 +8,28 @@ class RedisStore {
             ...opts
         });
     }
- 
+    async getRedis(){
+        return await this.redis
+    }
     async get(sid, ctx) {
         let data = await this.redis.get(`${sid}`);
         return data;
     }
- 
     async set(sid, val) {
         try {
-            await this.redis.client.set(`${sid}`, JSON.stringify(val));
+            await this.redis.set(`${sid}`, JSON.stringify(val));
         } catch (e) {}
         return sid;
     }
     async setex(sid, val, maxAge){
         try {
-            await this.redis.client.setex(`${sid}`, maxAge, maxAgeJSON.stringify(val));
+            await this.redis.setex(`${sid}`, maxAge, maxAgeJSON.stringify(val));
         } catch (e) {}
         return sid;
     }
     async incrBy(sid, increment){
         try {
-            await this.redis.client.incrby(sid, increment)
+            await this.redis.incrby(sid, increment)
 
         } catch (e) {
             console.log(e, 'incrby:error')
@@ -36,12 +37,12 @@ class RedisStore {
         return sid;
     }
     async hexists(sid, field) {
-        let data = await this.redis.hexists(`${sid}`, field);
+        let data = await this.rediss(`${sid}`, field);
         return data;
     }
     async hmset(sid, fields = {}){
         try {
-            await this.redis.client.hmset(`${sid}`, fields);
+            await this.redis.hmset(`${sid}`, fields);
             return true
         } catch (e) {
             
@@ -49,15 +50,15 @@ class RedisStore {
         return false;
     }
     async hget(sid, field) {
-        let data = await this.redis.client.hget(`${sid}`, field);
+        let data = await this.redis.hget(`${sid}`, field);
         return data;
     }
     async hgetall(sid) {
-        let data = await this.redis.client.hgetall(`${sid}`);
+        let data = await this.redis.hgetall(`${sid}`);
         return data;
     }
-    async destroy(sid, ctx) {
-        return await this.redis.destroy(`${sid}`);
+    async destroy(sid) {
+        return await this.redis.del(`${sid}`);
     }
 }
  

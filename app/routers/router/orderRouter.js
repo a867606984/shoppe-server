@@ -18,9 +18,46 @@ let orderRouter = new Router();
    *      customer_id:
    *        type: "string"
    *        description: 用户id
-   *      product_id:
+   *      products:
+   *        type: "array"
+   *        description: 
+   *        items: 
+   *          type: "string"
+   *          description: 商品id
+   *      shipping_user:
    *        type: "string"
-   *        description: 商品id
+   *        description: 收货人姓名
+   *      province:
+   *        type: "number"
+   *        description: 省
+   *      city:
+   *        type: "number"
+   *        description: 市
+   *      district:
+   *        type: "number"
+   *        description: 地区
+   *      address:
+   *        type: "string"
+   *        description: 地址
+   *      payment_method:
+   *        type: "number"
+   *        description: 支付方式
+   *        default: 4
+   *      district_money:
+   *        type: "number"
+   *        description: 优惠金额
+   *        default: 0.00
+   *      shipping_money:
+   *        type: "number"
+   *        description: 运费金额
+   *        default: 0.00
+   *      shipping_comp_name:
+   *        type: "string"
+   *        description: 快递公司名称
+   *      order_status:
+   *        type: "string"
+   *        description: 订单状态： 1未支付，2待发货，3待接收，4已接收
+   *        default: 2
    *   
    */
 orderRouter

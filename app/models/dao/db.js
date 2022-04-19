@@ -351,7 +351,6 @@ const order_master = sequelize.define('order_master', {
   },
   pay_time: {
     type: DataTypes.DATE,
-    allowNull: false
   },
   order_status: {
     type: DataTypes.TINYINT(4),

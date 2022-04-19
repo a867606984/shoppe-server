@@ -96,7 +96,17 @@ const Routers = require('./app/routers');
 app.use(Routers.routes()).use(Routers.allowedMethods());
 
 
+// const TestRedis = require('ioredis');
+// const { default: Redlock } = require('redlock');
+// const client = new TestRedis({...redisConfig})
+// const redlock = new Redlock([client])
 
+// const testlock = async () => {
+//   const lock = await redlock.acquire(["testLock111"], 5000);
+//   await client.set('testLock', '444')
+//   console.log('lock.value---------------', lock);
+// }
+// testlock();
 
 
 app.listen(Port, () => {

@@ -6,6 +6,7 @@
  * @LastEditTime: 2020-02-27 15:58:55
  */
 const db = require('./db.js');
+const productDao = require('./productDao')
 let Redis = require('../../middleware/RedisStore')
 let redis = new Redis({db: 1}) //索引为1的redis数据库
 
@@ -29,11 +30,17 @@ module.exports = {
   },
   // 新插入购物车信息
   AddShoppingCart: async (customer_id, product_id) => {
-    return await db.order_cart.create({
-      product_amount: 1,
-      customer_id,
-      product_id
-    })
+    let product = await productDao.GetProductBySearch(product_id)
+    
+    if(product) {
+      return await db.order_cart.create({
+        product_amount: 1,
+        customer_id,
+        product_id,
+        price: product.line_price
+      })
+    }
+    return null;
   },
   // 更新购物车商品数量
   UpdateShoppingCart: async (NewNum, customer_id, product_id) => {
