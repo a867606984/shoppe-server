@@ -16,32 +16,18 @@ let orderRouter = new Router();
    *  addOrderParam:
    *    properties:
    *      customer_id:
-   *        type: "string"
+   *        type: "number"
    *        description: 用户id
    *      products:
-   *        type: "array"
-   *        description: 
-   *        items: 
-   *          type: "string"
-   *          description: 商品id
-   *      shipping_user:
    *        type: "string"
-   *        description: 收货人姓名
-   *      province:
+   *        description: 商品id，多个商品id用逗号隔开
+   *      customer_addr_id:
    *        type: "number"
-   *        description: 省
-   *      city:
-   *        type: "number"
-   *        description: 市
-   *      district:
-   *        type: "number"
-   *        description: 地区
-   *      address:
-   *        type: "string"
-   *        description: 地址
+   *        description: 收货信息id
+   *        default: 1
    *      payment_method:
    *        type: "number"
-   *        description: 支付方式
+   *        description: 支付方式：1现金，2余额，3网银，4支付宝，5微信
    *        default: 4
    *      district_money:
    *        type: "number"
@@ -51,9 +37,6 @@ let orderRouter = new Router();
    *        type: "number"
    *        description: 运费金额
    *        default: 0.00
-   *      shipping_comp_name:
-   *        type: "string"
-   *        description: 快递公司名称
    *      order_status:
    *        type: "string"
    *        description: 订单状态： 1未支付，2待发货，3待接收，4已接收

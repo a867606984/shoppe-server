@@ -34,6 +34,49 @@ const customerLogin = sequelize.define('customer_login', {
 }
 );
 
+const customer_addr = sequelize.define('customer_addr', {
+  customer_addr_id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+  customer_id: {
+    type: DataTypes.INTEGER(10),
+    allowNull: false
+  },
+  zip: {
+    type: DataTypes.INTEGER(6),
+  },
+  province: {
+    type: DataTypes.INTEGER(6),
+    allowNull: false
+  },
+  city: {
+    type: DataTypes.INTEGER(6),
+    allowNull: false
+  },
+  district: {
+    type: DataTypes.INTEGER(6),
+    allowNull: false
+  },
+  address: {
+    type: DataTypes.STRING(200),
+    allowNull: false
+  },
+  is_default: {
+    type: DataTypes.TINYINT(4),
+    allowNull: false,
+    defaultValue: 0
+  },
+},
+{ 
+  freezeTableName: true,
+  timestamps: false,
+}
+);
+
+
 const customer_inf = sequelize.define('customer_inf', {
   customer_inf_id: {
     type: DataTypes.INTEGER(10),
@@ -391,6 +434,34 @@ const order_detail = sequelize.define('order_detail', {
 }
 );
 
+const shipping_info = sequelize.define('shipping_info', {
+  ship_id: {
+    type: DataTypes.INTEGER(10),
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+  ship_name: {
+    type: DataTypes.STRING(20),
+    allowNull: false
+  },
+  ship_contact: {
+    type: DataTypes.STRING(20),
+    allowNull: false
+  },
+  telephone: {
+    type: DataTypes.STRING(20),
+    allowNull: false
+  },
+  price: {
+    type: DataTypes.DECIMAL(8, 2),
+  }
+},
+{ 
+  freezeTableName: true,
+  timestamps: false,
+}
+);
 
 (async () => {
   await sequelize.sync(); //参数force不能设置为true，不然会删除数据库数据！！！
@@ -419,6 +490,7 @@ module.exports = {
   sequelize,
   query,
   customerLogin,
+  customer_addr,
   customer_inf,
   product_info,
   product_pic_info,
@@ -427,5 +499,6 @@ module.exports = {
   warehouse_product,
   order_cart,
   order_master,
-  order_detail
+  order_detail,
+  shipping_info
 }

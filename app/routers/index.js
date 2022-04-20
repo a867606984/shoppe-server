@@ -16,6 +16,7 @@ const shoppingCartRouter = require('./router/shoppingCartRouter');
 const orderRouter = require('./router/orderRouter');
 const collectRouter = require('./router/collectRouter');
 const warehouseRouter = require('./router/warehouseRouter');
+const userAddressRouter = require('./router/userAddressRouter');
 
 Routers.use(userRouter.routes());
 Routers.use(resourcesRouter.routes());
@@ -24,5 +25,6 @@ Routers.use(shoppingCartRouter.routes());
 Routers.use(orderRouter.routes());
 Routers.use(collectRouter.routes());
 Routers.use(warehouseRouter.routes());
+Routers.use(userAddressRouter.routes());
 
 module.exports = Routers;

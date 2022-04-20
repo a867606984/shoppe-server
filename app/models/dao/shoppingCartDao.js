@@ -30,8 +30,8 @@ module.exports = {
   },
   // 新插入购物车信息
   AddShoppingCart: async (customer_id, product_id) => {
-    let product = await productDao.GetProductBySearch(product_id)
-    
+    let product = await productDao.GetProductById(product_id)
+    console.log("????????0", product)
     if(product) {
       return await db.order_cart.create({
         product_amount: 1,

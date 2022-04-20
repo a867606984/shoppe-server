@@ -8,8 +8,8 @@ class RedisStore {
             ...opts
         });
     }
-    async getRedis(){
-        return await this.redis
+    getRedis(){
+        return this.redis
     }
     async get(sid, ctx) {
         let data = await this.redis.get(`${sid}`);

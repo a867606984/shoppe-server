@@ -63,5 +63,9 @@ module.exports = {
       console.log(error)
       t.rollback();
     }
-  }
+  },
+  //连接数据库查询用户的地址列表
+  GetUserAddress: async (customer_id) => {
+    
+  },
 }

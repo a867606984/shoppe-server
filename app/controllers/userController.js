@@ -195,7 +195,16 @@ module.exports = {
     }else{
       ctx.fail('注册失败')
     }
+  },
+  GetUserAddress: async ctx=>{
+    let { customer_id } = ctx.request.query
+    if(!customer_id){
+      ctx.fail('参数不正确');
+      return
+    }
 
-   
+    let result = await userDao.GetUserAddress(customer_id);
+
+    ctx.success(result)
   }
 };

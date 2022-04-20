@@ -102,7 +102,7 @@ app.use(Routers.routes()).use(Routers.allowedMethods());
 // const redlock = new Redlock([client])
 
 // const testlock = async () => {
-//   const lock = await redlock.acquire(["testLock111"], 5000);
+//   const lock = await redlock.acquire(["testLock111"], 100000);
 //   await client.set('testLock', '444')
 //   console.log('lock.value---------------', lock);
 // }

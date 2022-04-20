@@ -8,6 +8,8 @@
 const orderDao = require('../models/dao/orderDao');
 const shoppingCartDao = require('../models/dao/shoppingCartDao');
 const warehouseDao = require('../models/dao/warehouseDao');
+const addressDao = require('../models/dao/addressDao');
+const shippingDao = require('../models/dao/shippingDao');
 const productDao = require('../models/dao/productDao');
 const checkLogin = require('../middleware/checkLogin');
 
@@ -142,6 +144,7 @@ module.exports = {
       }
 
       //购买数 是否  超过了  库存数
+      let { product_amount } = await shoppingCartDao.FindShoppingCart(customer_id, product_id); //获取该用户该商品购物车信息
       if(product_amount > whProduct.current_cnt){
         ctx.fail(`${product_name}： 该产品仅剩${whProduct.current_cnt}件！`)
         return 
@@ -149,24 +152,46 @@ module.exports = {
 
     }
 
-    
     let lock = null
+    let t = null
+    
     try {
       //获取锁
-      lock =  await redlock.acquire(["goods_lock"], 10000);
-      
+      lock = await redlock.acquire(["goods_lock"], 10000);
+
       // Extend the lock.
       // lock = await lock.extend(5000);
+      
+      let addrObj = await addressDao.GetUserAddressById(params.customer_addr_id); //获取地址
+      if(addrObj){
+        ctx.fail("未获取到收货人信息")
+        return new Error('处所了')
+      }
+      
+      let shipping = await shippingDao.GetShipInfoById(1) //获取快递公司名称
+      if(shipping){
+        ctx.fail("未获取到快递公司信息")
+        return
+      }
+      
+      let payment_money = await getOrderTotalPrice(customer_id) - params.district_money + params.shipping_money //总金额 - 优惠金额 + 运费金额
+
+      let incre = await redisClient0.get(orderIncreKey);
+      await redis.incrBy(orderIncreKey, 1); //redis,订单编号后缀数字递增
 
       //开启mysql事务
-      let t = await db.sequelize.transaction()
+      t = await db.sequelize.transaction()
 
       //下订单
-      let payment_money = await getOrderTotalPrice(customer_id) - params.district_money + params.shipping_money //总金额 - 优惠金额 + 运费金额
-      let incre = await redisClient0.get(orderIncreKey);
-      const { order_id } = db.order_master.create({
+      const { order_id } = await db.order_master.create({
         ...params,
-        order_sn: `${order_no_pix}${(new Date()).getTime()}${incre}`, //订单编号
+        order_sn: `${order_no_pix}${Date.now()}${incre}`, //订单编号
+        shipping_user: addrObj.shipping_user,
+        province: addrObj.province,
+        city: addrObj.city,
+        district: addrObj.district,
+        address: addrObj.address,
+        shipping_comp_name: shipping.ship_name,
         payment_method: '4', //'支付方式：1现金，2余额，3网银，4支付宝，5微信'
         payment_money //支付金额
       }, { transaction: t })
@@ -210,18 +235,17 @@ module.exports = {
       //提交事务
       await t.commit();
 
-      //redis,订单编号后缀数字递增
-      await redis.incrBy(orderIncreKey, 1);
-
     } catch (error) {
 
       console.log(error)
       t.rollback();
       ctx.fail('服务器繁忙，请稍后重试');
+      return
     } finally {
-      // Release the lock.
+      
       await lock.release();
     }
+
     
     ctx.success(null, '下单成功！')
 

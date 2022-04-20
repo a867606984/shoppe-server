@@ -90,6 +90,7 @@ module.exports = {
     } else {
       //不存在则添加
       try {
+        console.log("?????/0--------")
         // 新插入购物车信息
         const res = await shoppingCartDao.AddShoppingCart(customer_id, product_id);
         // 判断是否插入成功
