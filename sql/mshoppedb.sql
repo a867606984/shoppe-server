@@ -11,7 +11,7 @@
  Target Server Version : 50730
  File Encoding         : 65001
 
- Date: 19/04/2022 18:56:12
+ Date: 21/04/2022 12:00:20
 */
 
 SET NAMES utf8mb4;
@@ -24,12 +24,14 @@ DROP TABLE IF EXISTS `customer_addr`;
 CREATE TABLE `customer_addr`  (
   `customer_addr_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增主键ID',
   `customer_id` int(10) UNSIGNED NOT NULL COMMENT 'customer_login表的自增ID',
-  `zip` int(6) NOT NULL COMMENT '邮编',
+  `shipping_user` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '收人姓名',
+  `shipping_user_phone` varchar(20) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL COMMENT '收货人手机号码',
+  `zip` int(6) NULL DEFAULT NULL COMMENT '邮编',
   `province` int(6) NOT NULL COMMENT '地区表中省份的ID',
   `city` int(6) NOT NULL COMMENT '地区表中城市的ID',
   `district` int(6) NOT NULL COMMENT '地区表中的区ID',
   `address` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '具体的地址门牌号',
-  `is_default` tinyint(4) NOT NULL COMMENT '是否默认',
+  `is_default` tinyint(4) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否默认.  1是，0否',
   `modified_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '最后修改时间',
   PRIMARY KEY (`customer_addr_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci COMMENT = '用户地址表' ROW_FORMAT = Dynamic;
@@ -37,7 +39,7 @@ CREATE TABLE `customer_addr`  (
 -- ----------------------------
 -- Records of customer_addr
 -- ----------------------------
-INSERT INTO `customer_addr` VALUES (1, 3, 518000, 440000, 440300, 440305, '高新园创维大厦18层', 1, '2022-04-19 18:54:29');
+INSERT INTO `customer_addr` VALUES (1, 3, '李萍', '13030112277', 518000, 440000, 440300, 440305, '高新园创维大厦18层', 1, '2022-04-20 16:34:06');
 
 -- ----------------------------
 -- Table structure for customer_inf
@@ -90,17 +92,16 @@ CREATE TABLE `order_cart`  (
   `customer_id` int(10) UNSIGNED NOT NULL COMMENT '用户ID',
   `product_id` int(10) UNSIGNED NOT NULL COMMENT '商品ID',
   `product_amount` int(11) NOT NULL COMMENT '加入购物车商品数量',
-  `price` decimal(8, 2) NULL DEFAULT NULL COMMENT '商品价格',
+  `price` decimal(8, 2) NOT NULL COMMENT '商品价格',
   `add_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '加入购物车时间',
   `modified_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '最后修改时间',
   PRIMARY KEY (`cart_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci COMMENT = '购物车表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci COMMENT = '购物车表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of order_cart
 -- ----------------------------
-INSERT INTO `order_cart` VALUES (3, 3, 2, 1, NULL, '2022-04-13 16:15:24', '2022-04-13 17:06:48');
-INSERT INTO `order_cart` VALUES (5, 3, 4, 1, NULL, '2022-04-13 17:02:19', '2022-04-13 17:02:19');
+INSERT INTO `order_cart` VALUES (9, 3, 4, 2, 1599.00, '2022-04-21 06:26:05', '2022-04-21 06:26:49');
 
 -- ----------------------------
 -- Table structure for order_detail
@@ -118,13 +119,13 @@ CREATE TABLE `order_detail`  (
   `w_id` int(10) UNSIGNED NOT NULL DEFAULT 1 COMMENT '仓库ID',
   `modified_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '最后修改时间',
   PRIMARY KEY (`order_detail_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci COMMENT = '订单详情表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci COMMENT = '订单详情表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of order_detail
 -- ----------------------------
-INSERT INTO `order_detail` VALUES (2, 2, 3, '12', 1, 11.00, NULL, NULL, 1, '2022-04-17 23:23:03');
-INSERT INTO `order_detail` VALUES (3, 3, 3, '1545', 1, 11.00, NULL, NULL, 1, '2022-04-17 23:31:38');
+INSERT INTO `order_detail` VALUES (1, 4, 2, 'Redmi K30', 1, 1599.00, NULL, NULL, 1, '2022-04-21 06:35:44');
+INSERT INTO `order_detail` VALUES (2, 4, 3, 'Redmi K30 5G', 1, 1599.00, NULL, NULL, 1, '2022-04-21 06:35:44');
 
 -- ----------------------------
 -- Table structure for order_master
@@ -135,9 +136,9 @@ CREATE TABLE `order_master`  (
   `order_sn` char(25) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL COMMENT '订单编号 yyyymmddnnnnnnnn',
   `customer_id` int(10) UNSIGNED NOT NULL COMMENT '下单人ID',
   `shipping_user` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '收货人姓名',
-  `province` smallint(6) NOT NULL COMMENT '省',
-  `city` smallint(6) NOT NULL COMMENT '市',
-  `district` smallint(6) NOT NULL COMMENT '区',
+  `province` int(6) NOT NULL COMMENT '省',
+  `city` int(6) NOT NULL COMMENT '市',
+  `district` int(6) NOT NULL COMMENT '区',
   `address` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '地址',
   `payment_method` tinyint(4) NOT NULL COMMENT '支付方式：1现金，2余额，3网银，4支付宝，5微信',
   `order_money` decimal(8, 2) NOT NULL DEFAULT 0.00 COMMENT '订单金额',
@@ -145,7 +146,7 @@ CREATE TABLE `order_master`  (
   `shipping_money` decimal(8, 2) NOT NULL DEFAULT 0.00 COMMENT '运费金额',
   `payment_money` decimal(8, 2) NOT NULL DEFAULT 0.00 COMMENT '支付金额',
   `shipping_comp_name` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '快递公司名称',
-  `shipping_sn` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '快递单号',
+  `shipping_sn` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '快递单号',
   `create_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '下单时间',
   `shipping_time` datetime(0) NULL DEFAULT NULL COMMENT '发货时间',
   `pay_time` datetime(0) NULL DEFAULT NULL COMMENT '支付时间',
@@ -154,13 +155,12 @@ CREATE TABLE `order_master`  (
   `invoice_time` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL COMMENT '发票抬头',
   `modified_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '最后修改时间',
   PRIMARY KEY (`order_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci COMMENT = '订单主表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci COMMENT = '订单主表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of order_master
 -- ----------------------------
-INSERT INTO `order_master` VALUES (2, '22', 3, '212', 22, 2, 22, '22', 1, 0.00, 0.00, 0.00, 0.00, '22', '22', '2022-04-17 23:22:42', NULL, '2022-04-17 23:22:38', NULL, 2, NULL, '2022-04-17 23:22:42');
-INSERT INTO `order_master` VALUES (3, '14', 3, '144', 22, 2, 22, '22', 1, 0.00, 0.00, 0.00, 0.00, '12', '12', '2022-04-17 23:31:05', NULL, '2022-04-17 23:31:01', NULL, 2, NULL, '2022-04-17 23:31:05');
+INSERT INTO `order_master` VALUES (4, '0111650494144852111', 3, '李萍', 440000, 440300, 440305, '高新园创维大厦18层', 4, 0.00, 0.00, 0.00, 0.00, '顺丰快递', NULL, '2022-04-21 06:35:44', NULL, NULL, NULL, 2, NULL, '2022-04-21 06:35:44');
 
 -- ----------------------------
 -- Table structure for product_category
@@ -316,13 +316,18 @@ INSERT INTO `product_pic_info` VALUES (38, 38, '', 'http://cpipi.top/image/mysho
 DROP TABLE IF EXISTS `shipping_info`;
 CREATE TABLE `shipping_info`  (
   `ship_id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `ship_name` varchar(20) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL COMMENT '物流公司名称',
-  `ship_contact` varchar(20) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL COMMENT '物流公司联系人',
+  `ship_name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '物流公司名称',
+  `ship_contact` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '物流公司联系人',
   `telephone` varchar(20) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL COMMENT '物流公司联系电话',
   `price` decimal(8, 2) NOT NULL DEFAULT 0.00 COMMENT '配送价格',
   `modified_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '最后修改时间',
   PRIMARY KEY (`ship_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci COMMENT = '物流公司信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci COMMENT = '物流公司信息表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of shipping_info
+-- ----------------------------
+INSERT INTO `shipping_info` VALUES (1, '顺丰快递', '顺丰小哥', '13030112233', 0.00, '2022-04-20 15:42:05');
 
 -- ----------------------------
 -- Table structure for users

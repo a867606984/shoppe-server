@@ -27,7 +27,7 @@ module.exports = {
   },
   //连接数据库查询用户的地址
   GetUserAddressById: async (customer_addr_id) => {
-    return await db.customer_addr.findAll({
+    return await db.customer_addr.findOne({
       where: {
         customer_addr_id,
       }

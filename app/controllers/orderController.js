@@ -22,7 +22,6 @@ const { default: Redlock } = require('redlock');
 const redis = new Redis({db: 1})
 const redlock = new Redlock([redis.getRedis()])
 
-const redisClient0 = new Redis({db: 0})
 const { order_no_pix, orderIncreKey} = require('../../config')
 
 /*
@@ -36,7 +35,7 @@ const getProductCntByShopCart = async function (customer_id, product_id) {
   let orderList = await orderDao.GetUserProductList(customer_id, product_id) //获取该用户该商品id的信息列表
 
   orderList.forEach(item => {
-    sum += item.product.cnt
+    sum += item.product_cnt
   })
 
   return sum;
@@ -49,7 +48,7 @@ const getOrderTotalPrice = async function(customer_id, product_id) {
   let totalPrice = 0;
   const shopCartList = await shoppingCartDao.GetShoppingCart(customer_id);
   shopCartList.forEach(item => {
-    totalPrice += item.getDataValue(item.product_amount) * item.getDataValue(item.price);
+    totalPrice += item.product_amount * item.price;
   })
 
   return totalPrice;
@@ -163,24 +162,25 @@ module.exports = {
       // lock = await lock.extend(5000);
       
       let addrObj = await addressDao.GetUserAddressById(params.customer_addr_id); //获取地址
-      if(addrObj){
+      if(!addrObj){
         ctx.fail("未获取到收货人信息")
-        return new Error('处所了')
+        throw new Error('未获取到收货人信息')
       }
       
       let shipping = await shippingDao.GetShipInfoById(1) //获取快递公司名称
-      if(shipping){
+      if(!shipping){
         ctx.fail("未获取到快递公司信息")
-        return
+        throw new Error('未获取到快递公司信息')
       }
       
       let payment_money = await getOrderTotalPrice(customer_id) - params.district_money + params.shipping_money //总金额 - 优惠金额 + 运费金额
 
-      let incre = await redisClient0.get(orderIncreKey);
-      await redis.incrBy(orderIncreKey, 1); //redis,订单编号后缀数字递增
-
       //开启mysql事务
       t = await db.sequelize.transaction()
+
+      let incre = await redis.get(orderIncreKey);
+      await redis.incrBy(orderIncreKey, 1); //redis,订单编号后缀数字递增
+
 
       //下订单
       const { order_id } = await db.order_master.create({
@@ -216,9 +216,11 @@ module.exports = {
 
         //新增订单详情
         let { product_amount, price } = await shoppingCartDao.FindShoppingCart(customer_id, product_id);
+        let { product_name } = await productDao.GetProductById(product_id);
         await db.order_detail.create({
           order_id,
           product_id,
+          product_name,
           product_cnt: product_amount,
           product_price: price
         }, { transaction: t })
@@ -236,10 +238,10 @@ module.exports = {
       await t.commit();
 
     } catch (error) {
+      ctx.fail('服务器繁忙，请稍后重试');
 
       console.log(error)
       t.rollback();
-      ctx.fail('服务器繁忙，请稍后重试');
       return
     } finally {
       

@@ -18,6 +18,12 @@ let userAddressRouter = new Router();
    *      customer_id:
    *        type: "number"
    *        description: 用户id
+   *      shipping_user:
+   *        type: "string"
+   *        description: 收货人
+   *      shipping_user_phone:
+   *        type: "string"
+   *        description: 收货人手机号码
    *      province:
    *        type: "number"
    *        description: 省id

@@ -45,6 +45,14 @@ const customer_addr = sequelize.define('customer_addr', {
     type: DataTypes.INTEGER(10),
     allowNull: false
   },
+  shipping_user: {
+    type: DataTypes.STRING(10),
+    allowNull: false
+  },
+  shipping_user_phone: {
+    type: DataTypes.STRING(20),
+    allowNull: false
+  },
   zip: {
     type: DataTypes.INTEGER(6),
   },
@@ -327,7 +335,10 @@ const order_cart = sequelize.define('order_cart', {
     type: DataTypes.TINYINT(11),
     allowNull: false
   },
-
+  price: {
+    type: DataTypes.DECIMAL(8, 2),
+    allowNull: false
+  }
 },
 { 
   freezeTableName: true,
@@ -355,15 +366,15 @@ const order_master = sequelize.define('order_master', {
     allowNull: false
   },
   province: {
-    type: DataTypes.SMALLINT(6),
+    type: DataTypes.INTEGER(6),
     allowNull: false
   },
   city: {
-    type: DataTypes.SMALLINT(6),
+    type: DataTypes.INTEGER(6),
     allowNull: false
   },
   district: {
-    type: DataTypes.SMALLINT(6),
+    type: DataTypes.INTEGER(6),
     allowNull: false
   },
   address: {
@@ -390,7 +401,6 @@ const order_master = sequelize.define('order_master', {
   },
   shipping_sn: {
     type: DataTypes.STRING(50),
-    allowNull: false
   },
   pay_time: {
     type: DataTypes.DATE,
@@ -417,6 +427,10 @@ const order_detail = sequelize.define('order_detail', {
   },
   product_id: {
     type: DataTypes.INTEGER(10),
+    allowNull: false
+  },
+  product_name: {
+    type: DataTypes.STRING(20),
     allowNull: false
   },
   product_cnt: {
