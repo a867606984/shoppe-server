@@ -15,7 +15,7 @@ git clone https://github.com/a867606984/shoppe-server.git
 
 2. Project setup
 
-cd store-server
+cd shoppe-server
 npm install
 
 3. Run project
