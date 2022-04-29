@@ -20,7 +20,7 @@ npm install
 
 3. Run project
 
-node start
+npm start
 ```
 ## Swagger接口文档
 
