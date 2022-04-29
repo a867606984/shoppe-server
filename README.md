@@ -1,20 +1,17 @@
-# store-server
+# shoppe-server
 
 ## 前言
+- 采用 Koa 框架根据原型图写出商城的相关接口，实现高并发的商品查询、加入购物车、下订单、减库存、商品收藏等功能 
+- Koa 项目中使用并封装中间件、RESTful API、Sequeize 库、 Redis 库
+- 使用 Redis+Session 实践分布式的登陆会话共享，使用 Redlock 分布式锁实践高并发下商品的秒杀下单、减库存功能 
+- Swagger 提供相关接口文档 
 
-2020年寒假尤其特殊，因为新型冠状病毒肺炎疫情，学校至今没有开学。想起上学期利用课余时间学习了`vue`、`node.js`，一直想做个完整的项目实战一下，但之前在学校并没有那么多的时间。现在恰好有时间，就想着做一个项目巩固之前学到的东西。 
-
-本项目前后端分离，这是项目的后端，前端请移步[vue-store](https://github.com/hai-27/vue-store)。
-
-## 接口文档
-
-[接口文档](https://github.com/hai-27/store-server/blob/master/docs/API.md)
 
 ## 运行项目
 ```
 1. Clone project
 
-git clone https://github.com/hai-27/store-server.git
+git clone https://github.com/a867606984/shoppe-server.git
 
 2. Project setup
 
@@ -23,5 +20,8 @@ npm install
 
 3. Run project
 
-node app.js
+node start
 ```
+## Swagger接口文档
+
+http://localhost:3000/swagger

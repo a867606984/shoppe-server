@@ -6,6 +6,7 @@ const { dbConfig } = require('../../../config');
 const sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
   host: dbConfig.host,
   dialect: 'mysql', /* one of 'mysql' | 'mariadb' | 'postgres' | 'mssql' */
+  // dialect: 'mariadb', /* 线上配置， 本人线上使用的是mariadb数据库， */
   operatorsAliases: {
     $like: Op.like,
     $and: Op.and

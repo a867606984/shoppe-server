@@ -12,19 +12,35 @@ module.exports = {
   staticDir: path.resolve('./public'), // 静态资源路径
   swaggerDir: path.resolve('./public/swagger'), //swagger路径
   uploadDir: path.join(__dirname, path.resolve('public/')), // 上传文件路径
-  // 数据库连接设置
+  // 本地测试数据库连接设置
   dbConfig: {
-    connectionLimit: 10,
+    // connectionLimit: 10,
     host: '127.0.0.1',
     user: 'root',
     password: '123456',
     database: 'mshoppedb'
   },
+  //线上mariadb数据库连接设置
+  // dbConfig: {
+  //   host: '42.194.195.99',
+  //   port: '3306',
+  //   user: 'root',
+  //   password: 'chenping960728',
+  //   database: 'mshoppedb'
+  // },
   //redis连接设置
+  // redisConfig: {
+  //   host: "42.194.195.99",
+  //   port: 9527,
+  //   password: 'chenping960728'
+  // },
   redisConfig: {
-    host: "42.194.195.99",
-    port: 9527,
-    password: 'chenping960728'
+    sentinels: [
+      { host: "42.194.195.99", port: 9527, password: 'chenping960728' },
+      { host: "42.194.195.99", port: 9528, password: 'chenping960728' },
+      { host: "42.194.195.99", port: 9529, password: 'chenping960728' },
+    ],
+    name: "mymaster",
   },
   COOKIEKEY: 'sess:store:', //cookie的key
   SESSIONKEY: 'sess:store:',

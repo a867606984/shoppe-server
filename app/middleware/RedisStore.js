@@ -5,7 +5,7 @@ class RedisStore {
     constructor(opts) {
         this.redis = new Redis({
             ...redisConfig,
-            ...opts
+            ...opts,
         });
     }
     getRedis(){
