@@ -15,33 +15,18 @@ module.exports = {
   // 本地测试数据库连接设置
   dbConfig: {
     // connectionLimit: 10,
-    host: '127.0.0.1',
-    user: 'root',
-    password: '123456',
-    database: 'mshoppedb'
+    host: '',
+    user: '',
+    password: '',
+    database: ''
   },
-  //线上mariadb数据库连接设置
-  // dbConfig: {
-  //   host: '42.194.195.99',
-  //   port: '3306',
-  //   user: 'root',
-  //   password: 'chenping960728',
-  //   database: 'mshoppedb'
-  // },
   //redis连接设置
-  // redisConfig: {
-  //   host: "42.194.195.99",
-  //   port: 9527,
-  //   password: 'chenping960728'
-  // },
   redisConfig: {
-    sentinels: [
-      { host: "42.194.195.99", port: 9527, password: 'chenping960728' },
-      { host: "42.194.195.99", port: 9528, password: 'chenping960728' },
-      { host: "42.194.195.99", port: 9529, password: 'chenping960728' },
-    ],
-    name: "mymaster",
+    host: '',
+    port: '',
+    password: ''
   },
+  
   COOKIEKEY: 'sess:store:', //cookie的key
   SESSIONKEY: 'sess:store:',
   product_good_pix: 'product_good_',
